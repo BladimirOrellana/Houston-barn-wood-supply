@@ -10,7 +10,9 @@ app.use(cors());
 // Middleware
 app.use(express.json());
 app.use(bodyParser.json());
-
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static("client/build"));
+}
 // Your routes here
 app.use(routes);
 // Connect to MongoDB
