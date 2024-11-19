@@ -1,9 +1,10 @@
 const express = require("express");
+const path = require("path");
 const connectDB = require("./db/db");
-
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const routes = require("./routes/index.js");
+
 const app = express();
 app.use(cors());
 
@@ -11,17 +12,21 @@ app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json());
 
-// Your routes here
+// API Routes
 app.use(routes);
-// Serve static files from the React app
+
+// Serve static files from the Vite `dist` folder
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static("client/build"));
+  app.use(express.static(path.join(__dirname, "client/dist")));
+
+  // Catch-all handler for React Router
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "client/dist", "index.html"));
+  });
 }
-// Catch-all handler for any request that doesn't match
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "client/build", "index.html"));
-});
+
 // Connect to MongoDB
 connectDB();
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
