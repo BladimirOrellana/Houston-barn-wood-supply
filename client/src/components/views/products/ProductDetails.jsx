@@ -15,7 +15,7 @@ const ProductDetails = () => {
   const { id } = useParams();
   const { cartDispatch } = useCart();
   const { user } = useUser();
-  const [product, setProduct] = useState(null);
+  const [product, setProduct] = useState([]);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
 
@@ -75,7 +75,11 @@ const ProductDetails = () => {
     );
   }
 
-  return (
+  return product.length === 0 ? (
+    <Box>
+      <h1>No product yets </h1>
+    </Box>
+  ) : (
     <Box
       sx={{
         padding: 4,
