@@ -9,7 +9,6 @@ app.use(cors());
 
 // Middleware
 app.use(express.json());
-
 app.use(bodyParser.json());
 
 // Your routes here
