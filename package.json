@@ -4,7 +4,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "heroku-postbuild": "npm install --prefix client && npm run build --prefix client",
+    "heroku-postbuild": "npm install vite --prefix client && npm install --prefix client && npm run build --prefix client",
 
     "client": "npm start --prefix client",
     "server": "nodemon server.js",
