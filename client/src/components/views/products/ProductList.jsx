@@ -22,8 +22,14 @@ const ProductList = () => {
   const fetchProducts = async () => {
     try {
       const response = await productApi.getAll();
-      console.log("products ", response.data);
-      setProducts(response.data);
+      console.log("Fetched products:", response.data);
+
+      // Ensure the response is an array
+      if (Array.isArray(response.data)) {
+        setProducts(response.data);
+      } else {
+        throw new Error("API did not return an array.");
+      }
       setLoading(false);
     } catch (err) {
       console.error("Error fetching products:", err);
@@ -51,15 +57,11 @@ const ProductList = () => {
       </Box>
     );
   }
-  console.log("Products:=>", products); // Or the variable you are mapping over
 
   return products.length === 0 ? (
-    <Box>
-      <div style={{ textAlign: "center" }}>
-        {" "}
-        <Typography variant="poster">No Products Yet</Typography>
-        <h1>Come Back Later</h1>
-      </div>
+    <Box textAlign="center" mt={4}>
+      <Typography variant="h5">No Products Yet</Typography>
+      <Typography variant="body1">Come Back Later</Typography>
     </Box>
   ) : (
     <Container>
@@ -69,21 +71,20 @@ const ProductList = () => {
       <Grid container spacing={3}>
         {products.map((product) => (
           <Grid item xs={12} sm={6} md={4} key={product._id}>
-            <Card style={{ padding: 10 }}>
+            <Card>
               <CardMedia
                 component="img"
                 height="200"
-                image={""} // Ensure `product.image` is a valid URL
-                alt={product.name}
+                image={product.image || "/fallback_image.jpg"} // Use fallback if image is missing
+                alt={product.name || "Product"}
               />
-
               <CardContent>
                 <Typography variant="h6">{product.name}</Typography>
                 <Typography variant="body2" color="text.secondary">
-                  {product.description}
+                  {product.description || "No description available"}
                 </Typography>
                 <Typography variant="h6" color="primary" sx={{ marginTop: 1 }}>
-                  ${product.price}
+                  ${product.price?.toFixed(2) || "0.00"}
                 </Typography>
               </CardContent>
               <Button
@@ -91,8 +92,7 @@ const ProductList = () => {
                 component={Link}
                 to={`/products/product/${product._id}`}
                 sx={{
-                  width: "calc(100% )", // Full width minus margin (adjust if needed)
-                  alignSelf: "center", // Ensures button centers horizontally in Card
+                  width: "100%",
                 }}
               >
                 View
