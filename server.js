@@ -12,15 +12,6 @@ app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json());
 
-// Serve static files from the Vite `dist` folder
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "client/dist")));
-
-  // Catch-all handler for React Router
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "client/dist", "index.html"));
-  });
-}
 // API Routes
 app.use(routes);
 // Connect to MongoDB
