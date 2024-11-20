@@ -9,23 +9,22 @@ import {
   ListItemText,
   Divider,
   CircularProgress,
+  Container,
 } from "@mui/material";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import GoBackButton from "../../GoBackButton/GoBackButton";
 
 const OrderDetails = () => {
-  const { orderId } = useParams(); // Assume the route is `/orders/:orderId`
-  console.log("params detail ", orderId);
+  const { orderId } = useParams();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Fetch order details
   const fetchOrder = async () => {
     try {
-      const response = await axios.get(`/api/orders/order/${orderId}`); // Adjust endpoint as needed
+      const response = await axios.get(`/api/orders/order/${orderId}`);
       setOrder(response.data);
-      console.error(" fetching order details:", response.data);
       setLoading(false);
     } catch (err) {
       console.error("Error fetching order details:", err);
@@ -55,149 +54,171 @@ const OrderDetails = () => {
   }
 
   return (
-    <Box
-      sx={{
-        padding: { xs: 2, sm: 4 },
-        maxWidth: "900px",
-        margin: "auto",
-        backgroundColor: "#f9f9f9",
-        borderRadius: 2,
-        boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
-      }}
-    >
-      {/* Order Header */}
-      <Typography
-        variant="h4"
+    <Container maxWidth="md" sx={{ marginTop: 4 }}>
+      <GoBackButton />
+      <Box
         sx={{
-          textAlign: "center",
-          fontWeight: "bold",
-          marginBottom: 4,
-        }}
-      >
-        Order Details
-      </Typography>
-
-      {/* Buyer Information */}
-      <Paper
-        sx={{
-          padding: 3,
-          marginBottom: 3,
+          backgroundColor: "#f9f9f9",
           borderRadius: 2,
-          boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+          padding: { xs: 3, sm: 5 },
         }}
       >
-        <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: 2 }}>
-          Buyer Information
+        <Typography
+          variant="h4"
+          sx={{
+            textAlign: "center",
+            fontWeight: "bold",
+            marginBottom: 4,
+            color: "#333",
+          }}
+        >
+          Order Details
         </Typography>
-        <Typography variant="body1">
-          <strong>Name:</strong> {order.userId.firstName}{" "}
-          {order.userId.lastName}
-        </Typography>
-        <Typography variant="body1">
-          <strong>Email:</strong> {order.userId.email}
-        </Typography>
-      </Paper>
 
-      {/* Order Items */}
-      <Paper
-        sx={{
-          padding: 3,
-          marginBottom: 3,
-          borderRadius: 2,
-          boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-        }}
-      >
-        <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: 2 }}>
-          Items
-        </Typography>
-        <List>
-          {order.items.map((item) =>
-            item.productId ? (
+        {/* Buyer Information */}
+        <Paper
+          sx={{
+            padding: 3,
+            marginBottom: 4,
+            borderRadius: 2,
+            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <Typography
+            variant="h6"
+            sx={{ fontWeight: "bold", marginBottom: 2, color: "#444" }}
+          >
+            Buyer Information
+          </Typography>
+          <Typography variant="body1" sx={{ color: "#555" }}>
+            <strong>Name:</strong> {order.userId.firstName}{" "}
+            {order.userId.lastName}
+          </Typography>
+          <Typography variant="body1" sx={{ color: "#555" }}>
+            <strong>Email:</strong> {order.userId.email}
+          </Typography>
+        </Paper>
+
+        {/* Order Items */}
+        <Paper
+          sx={{
+            padding: 3,
+            marginBottom: 4,
+            borderRadius: 2,
+            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <Typography
+            variant="h6"
+            sx={{ fontWeight: "bold", marginBottom: 2, color: "#444" }}
+          >
+            Items Ordered
+          </Typography>
+          <List>
+            {order.items.map((item) => (
               <React.Fragment key={item.productId._id}>
                 <ListItem>
                   <ListItemText
-                    primary={item.productId.name}
-                    secondary={`Price: $${item.productId.price.toFixed(
-                      2
-                    )} | Quantity: ${item.quantity} | Subtotal: $${(
-                      item.productId.price * item.quantity
-                    ).toFixed(2)}`}
+                    primary={
+                      <Typography
+                        variant="subtitle1"
+                        sx={{ fontWeight: "500" }}
+                      >
+                        {item.productId.name}
+                      </Typography>
+                    }
+                    secondary={
+                      <>
+                        <Typography variant="body2" sx={{ color: "#777" }}>
+                          Price: ${item.productId.price.toFixed(2)}
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: "#777" }}>
+                          Quantity: {item.quantity}
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: "#777" }}>
+                          Subtotal: $
+                          {(item.productId.price * item.quantity).toFixed(2)}
+                        </Typography>
+                      </>
+                    }
                   />
                 </ListItem>
                 <Divider />
               </React.Fragment>
-            ) : null
-          )}
-        </List>
-      </Paper>
+            ))}
+          </List>
+        </Paper>
 
-      {/* Order Summary */}
-      <Paper
-        sx={{
-          padding: 3,
-          borderRadius: 2,
-          boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-        }}
-      >
-        <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: 2 }}>
-          Order Summary
-        </Typography>
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
-            <Typography variant="body1">
-              <strong>Order ID:</strong>
-            </Typography>
+        {/* Order Summary */}
+        <Paper
+          sx={{
+            padding: 3,
+            borderRadius: 2,
+            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <Typography
+            variant="h6"
+            sx={{ fontWeight: "bold", marginBottom: 2, color: "#444" }}
+          >
+            Order Summary
+          </Typography>
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <Typography variant="body1" sx={{ color: "#555" }}>
+                <strong>Order ID: {order._id}</strong>
+              </Typography>
+            </Grid>
+            <Grid item xs={6} textAlign="right"></Grid>
+            <Grid item xs={6}>
+              <Typography variant="body1" sx={{ color: "#555" }}>
+                <strong>Date:</strong>
+              </Typography>
+            </Grid>
+            <Grid item xs={6} textAlign="right">
+              <Typography variant="body1" sx={{ color: "#555" }}>
+                {new Date(order.createdAt).toLocaleDateString()}
+              </Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography variant="body1" sx={{ color: "#555" }}>
+                <strong>Total Amount:</strong>
+              </Typography>
+            </Grid>
+            <Grid item xs={6} textAlign="right">
+              <Typography
+                variant="body1"
+                sx={{ fontWeight: "bold", color: "#333" }}
+              >
+                ${order.totalAmount.toFixed(2)}
+              </Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography variant="body1" sx={{ color: "#555" }}>
+                <strong>Status:</strong>
+              </Typography>
+            </Grid>
+            <Grid item xs={6} textAlign="right">
+              <Typography
+                variant="body1"
+                sx={{
+                  fontWeight: "bold",
+                  color:
+                    order.status === "Delivered"
+                      ? "green"
+                      : order.status === "In Transit"
+                      ? "orange"
+                      : "blue",
+                }}
+              >
+                {order.status}
+              </Typography>
+            </Grid>
           </Grid>
-          <Grid item xs={6}>
-            <Typography variant="body1" textAlign="right">
-              {order._id}
-            </Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="body1">
-              <strong>Date:</strong>
-            </Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="body1" textAlign="right">
-              {new Date(order.createdAt).toLocaleDateString()}
-            </Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="body1">
-              <strong>Total Amount:</strong>
-            </Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="body1" textAlign="right">
-              ${order.totalAmount.toFixed(2)}
-            </Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="body1">
-              <strong>Status:</strong>
-            </Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography
-              variant="body1"
-              textAlign="right"
-              sx={{
-                color:
-                  order.status === "Delivered"
-                    ? "green"
-                    : order.status === "In Transit"
-                    ? "orange"
-                    : "blue",
-                fontWeight: "bold",
-              }}
-            >
-              {order.status}
-            </Typography>
-          </Grid>
-        </Grid>
-      </Paper>
-    </Box>
+        </Paper>
+      </Box>
+    </Container>
   );
 };
 

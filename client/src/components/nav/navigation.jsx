@@ -47,6 +47,9 @@ function Navigation() {
       <Button component={Link} to="/contact" color="inherit">
         Contact
       </Button>
+      <Button component={Link} to="/calculator" color="inherit">
+        Calculator
+      </Button>
       {user ? (
         <Button component={Link} to="/profile" color="inherit">
           Account
@@ -76,6 +79,9 @@ function Navigation() {
         </ListItem>
         <ListItem button component={Link} to="/contact">
           <ListItemText primary="Contact" />
+        </ListItem>
+        <ListItem button component={Link} to="/calculator">
+          <ListItemText primary="Calculator" />
         </ListItem>
         {user ? (
           <ListItem button component={Link} to="/profile">

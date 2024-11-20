@@ -1,100 +1,137 @@
+import {} from "react";
 import { Box, Avatar, Typography, Grid, Button, Divider } from "@mui/material";
 import LogoutButton from "./../../logoutButton/LogoutButton";
 import { useUser } from "../../../context/UserContext";
 import { Link, Navigate } from "react-router-dom";
+
 const Profile = () => {
   const { user } = useUser();
+
   if (!user) {
     return <Navigate to="/login" />;
   }
-  console.log("profile ", user);
 
   return (
     <Box
       sx={{
-        maxWidth: "900px",
-        margin: "auto",
         padding: 3,
-        backgroundColor: "#fff",
-        borderRadius: 2,
-        boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
-        width: "100%", // Ensures full width on smaller screens
+        maxWidth: "100%",
+        backgroundColor: "#f9f9f9",
+        minHeight: "100vh",
       }}
     >
-      {/* Profile Header */}
       <Box
         sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          flexWrap: "wrap", // Allows wrapping on smaller screens
-          marginBottom: 3,
-          gap: 2, // Adds spacing when items wrap
+          margin: "auto",
+          padding: 3,
+          maxWidth: "600px",
+          backgroundColor: "#fff",
+          borderRadius: 2,
+          boxShadow: "0 8px 16px rgba(0, 0, 0, 0.1)",
+          textAlign: "center",
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          <Avatar
-            alt="User Avatar"
-            src="https://source.unsplash.com/random/150x150"
-            sx={{
-              width: { xs: 80, sm: 100 }, // Smaller avatar on small screens
-              height: { xs: 80, sm: 100 },
-            }}
-          />
-          <Box>
+        {/* Profile Header */}
+        <Grid container spacing={2} alignItems="center" justifyContent="center">
+          <Grid item xs={12} sm={3} textAlign="center">
+            <Avatar
+              alt="User Avatar"
+              src="https://source.unsplash.com/random/150x150"
+              sx={{
+                width: { xs: 80, sm: 100 },
+                height: { xs: 80, sm: 100 },
+                margin: "auto",
+                boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={9} textAlign={{ xs: "center", sm: "left" }}>
             <Typography
               variant="h5"
               sx={{
                 fontWeight: "bold",
-                fontSize: { xs: "1.2rem", sm: "1.5rem" }, // Adjust font size
+                fontSize: { xs: "1.4rem", sm: "1.8rem" },
               }}
             >
               {user.firstName} {user.lastName}
             </Typography>
-            <Typography variant="body1" color="text.secondary">
-              {user ? user.email : null}
-            </Typography>
-          </Box>
-        </Box>
-        <Button
-          variant="contained"
-          color="primary"
-          sx={{ width: { xs: "100%", sm: "auto" } }} // Full-width button on mobile
-        >
-          Edit Profile
-        </Button>
-      </Box>
-
-      {/* Profile Stats */}
-      <Grid container spacing={2} sx={{ textAlign: "center", marginBottom: 3 }}>
-        <Grid item xs={4} sm={4}>
-          <Button
-            variant="text"
-            color="primary"
-            sx={{ width: { xs: "100%", sm: "auto" } }} // Full-width button on mobile
-          >
-            Active Orders
-          </Button>
-        </Grid>
-        <Grid item xs={4} sm={4}>
-          {user && user.role === "admin" ? (
-            <Button
-              LinkComponent={Link}
-              to="/orders"
-              variant="text"
-              color="primary"
-              sx={{ width: { xs: "100%", sm: "auto" } }} // Full-width button on mobile
+            <Typography
+              variant="body1"
+              color="text.secondary"
+              sx={{ fontSize: { xs: "0.9rem", sm: "1rem" } }}
             >
-              Orders
-            </Button>
-          ) : null}
+              {user.email}
+            </Typography>
+          </Grid>
         </Grid>
-        <Grid item xs={4} sm={4}>
-          <LogoutButton />
-        </Grid>
-      </Grid>
 
-      <Divider sx={{ marginBottom: 3 }} />
+        {/* Edit Button */}
+        <Box mt={2}>
+          <Button
+            variant="outlined"
+            color="primary"
+            sx={{
+              textTransform: "none",
+              fontSize: "1rem",
+              padding: "8px 16px",
+              borderRadius: 3,
+            }}
+          >
+            Edit Profile
+          </Button>
+        </Box>
+
+        <Divider sx={{ marginY: 4 }} />
+
+        {/* Profile Actions */}
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={4}>
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              sx={{
+                textTransform: "none",
+                padding: "10px 20px",
+                borderRadius: 3,
+                fontSize: "1rem",
+              }}
+            >
+              Active Orders
+            </Button>
+          </Grid>
+          {user.role === "admin" && (
+            <Grid item xs={12} sm={4}>
+              <Button
+                component={Link}
+                to="/orders"
+                variant="contained"
+                color="secondary"
+                fullWidth
+                sx={{
+                  textTransform: "none",
+                  padding: "10px 20px",
+                  borderRadius: 3,
+                  fontSize: "1rem",
+                }}
+              >
+                Manage Orders
+              </Button>
+            </Grid>
+          )}
+          <Grid item xs={12} sm={4}>
+            <LogoutButton
+              sx={{
+                width: "100%",
+                textTransform: "none",
+                padding: "10px 20px",
+                borderRadius: 3,
+                fontSize: "1rem",
+              }}
+            />
+          </Grid>
+        </Grid>
+      </Box>
     </Box>
   );
 };
