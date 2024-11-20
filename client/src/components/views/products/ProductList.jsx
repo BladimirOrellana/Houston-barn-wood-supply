@@ -51,12 +51,14 @@ const ProductList = () => {
       </Box>
     );
   }
+  console.log("Products:=>", products); // Or the variable you are mapping over
 
   return products.length === 0 ? (
     <Box>
       <div style={{ textAlign: "center" }}>
         {" "}
-        <h1>No Products Yet</h1>
+        <Typography variant="poster">No Products Yet</Typography>
+        <h1>Come Back Later</h1>
       </div>
     </Box>
   ) : (
@@ -74,6 +76,7 @@ const ProductList = () => {
                 image={product.images[0]} // Ensure `product.image` is a valid URL
                 alt={product.name}
               />
+
               <CardContent>
                 <Typography variant="h6">{product.name}</Typography>
                 <Typography variant="body2" color="text.secondary">
