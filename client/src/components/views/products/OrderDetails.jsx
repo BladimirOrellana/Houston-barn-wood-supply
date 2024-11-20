@@ -111,21 +111,23 @@ const OrderDetails = () => {
           Items
         </Typography>
         <List>
-          {order.items.map((item) => (
-            <React.Fragment key={item.productId._id}>
-              <ListItem>
-                <ListItemText
-                  primary={item.productId.name}
-                  secondary={`Price: $${item.productId.price.toFixed(
-                    2
-                  )} | Quantity: ${item.quantity} | Subtotal: $${(
-                    item.productId.price * item.quantity
-                  ).toFixed(2)}`}
-                />
-              </ListItem>
-              <Divider />
-            </React.Fragment>
-          ))}
+          {order.items.map((item) =>
+            item.productId ? (
+              <React.Fragment key={item.productId._id}>
+                <ListItem>
+                  <ListItemText
+                    primary={item.productId.name}
+                    secondary={`Price: $${item.productId.price.toFixed(
+                      2
+                    )} | Quantity: ${item.quantity} | Subtotal: $${(
+                      item.productId.price * item.quantity
+                    ).toFixed(2)}`}
+                  />
+                </ListItem>
+                <Divider />
+              </React.Fragment>
+            ) : null
+          )}
         </List>
       </Paper>
 
