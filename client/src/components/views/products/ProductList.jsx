@@ -73,7 +73,7 @@ const ProductList = () => {
               <CardMedia
                 component="img"
                 height="200"
-                image={product.images[0]} // Ensure `product.image` is a valid URL
+                image={""} // Ensure `product.image` is a valid URL
                 alt={product.name}
               />
 
