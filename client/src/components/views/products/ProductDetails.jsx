@@ -98,7 +98,7 @@ const ProductDetails = () => {
         <Grid item xs={12} md={6}>
           <Box
             sx={{
-              backgroundImage: `url(${product.images[0]})`,
+              backgroundImage: `url(${product.thumbnail})`,
               backgroundSize: "cover",
               backgroundPosition: "center",
               borderRadius: 2,
