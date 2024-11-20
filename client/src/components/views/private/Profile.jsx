@@ -77,15 +77,17 @@ const Profile = () => {
           </Button>
         </Grid>
         <Grid item xs={4} sm={4}>
-          <Button
-            LinkComponent={Link}
-            to="/orders"
-            variant="text"
-            color="primary"
-            sx={{ width: { xs: "100%", sm: "auto" } }} // Full-width button on mobile
-          >
-            Orders
-          </Button>
+          {user && user.role === "admin" ? (
+            <Button
+              LinkComponent={Link}
+              to="/orders"
+              variant="text"
+              color="primary"
+              sx={{ width: { xs: "100%", sm: "auto" } }} // Full-width button on mobile
+            >
+              Orders
+            </Button>
+          ) : null}
         </Grid>
         <Grid item xs={4} sm={4}>
           <LogoutButton />

@@ -23,6 +23,7 @@ export const UserProvider = ({ children }) => {
                 firstName: result.data.firstName,
                 lastName: result.data.lastName,
                 email: result.data.email,
+                role: result.data.role,
                 _id: result.data._id,
               };
               console.log("context currentuser ", currentUserWithDB);
