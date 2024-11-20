@@ -5,6 +5,7 @@ const apiRoutes = require("./apis/index");
 
 router.use("/api", apiRoutes);
 // If no api routes are hit, send the react app
+
 if (process.env.NODE_ENV === "production") {
   router.use(express.static(path.resolve(__dirname, "../client/dist")));
   router.use("*", (req, res) => {
