@@ -4,6 +4,7 @@ import { useCart } from "./../../../context/CartContext";
 import cartApi from "../../../apis/cartApi";
 import axios from "axios";
 import { useUser } from "./../../../context/UserContext";
+import { Box, Typography } from "@mui/material";
 
 const Checkout = () => {
   const { cartState, cartDispatch } = useCart(); // Access cartState from useCart
@@ -33,6 +34,7 @@ const Checkout = () => {
       // Send the order to the backend
       const response = await axios.post("/api/orders", orderPayload);
       console.log("Order saved successfully:", response.data);
+
       const data = {
         userId: user._id,
       };
@@ -69,9 +71,24 @@ const Checkout = () => {
   }, [user]); // Fetch cart when component mounts and user is logged in
 
   return (
-    <div style={{ textAlign: "center" }}>
-      <h2>Checkout</h2>
-      <h3>Total: ${totalPrice.toFixed(2)}</h3>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100vh",
+        textAlign: "center",
+        backgroundColor: "#f9f9f9",
+        padding: 3,
+      }}
+    >
+      <Typography variant="h4" sx={{ marginBottom: 2 }}>
+        Checkout
+      </Typography>
+      <Typography variant="h5" sx={{ marginBottom: 4 }}>
+        Total: ${totalPrice.toFixed(2)}
+      </Typography>
       <PayPalButtons
         createOrder={(data, actions) => {
           return actions.order.create({
@@ -86,7 +103,7 @@ const Checkout = () => {
         }}
         onApprove={handleApprove}
       />
-    </div>
+    </Box>
   );
 };
 
