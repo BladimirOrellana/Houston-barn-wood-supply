@@ -7,11 +7,14 @@ import {
   ListItemText,
   Button,
 } from "@mui/material";
+import axios from "axios";
 import { useCart } from "./../../../context/CartContext";
 import { Link } from "react-router-dom";
-
+import { useUser } from "./../../../context/UserContext";
 const Cart = () => {
-  const { cartState } = useCart();
+  const { user } = useUser();
+  const userId = user ? user._id : null;
+  const { cartState, cartDispatch } = useCart(); // Access dispatch for state updates
 
   // Ensure cartState.items is an array before calculating totals
   const items = cartState?.items || [];
@@ -24,6 +27,18 @@ const Cart = () => {
     const price = item.productId?.price || 0;
     return acc + item.quantity * price;
   }, 0);
+  console.log("cart state ", cartState);
+  // Function to clear the cart
+  const clearCart = async () => {
+    try {
+      // Make a request to clear the cart in the backend
+      await axios.delete(`/api/carts/${userId}/clear`);
+      // Dispatch action to clear the cart in the context
+      cartDispatch({ type: "CLEAR_CART" });
+    } catch (error) {
+      console.error("Error clearing cart:", error);
+    }
+  };
 
   return (
     <Box sx={{ padding: 4, maxWidth: "600px", margin: "auto" }}>
@@ -65,6 +80,15 @@ const Cart = () => {
         disabled={items.length === 0}
       >
         Proceed to Checkout
+      </Button>
+      <Button
+        variant="outlined"
+        color="secondary"
+        sx={{ marginTop: 2, marginLeft: 2 }}
+        onClick={clearCart}
+        disabled={items.length === 0}
+      >
+        Clear Cart
       </Button>
     </Box>
   );

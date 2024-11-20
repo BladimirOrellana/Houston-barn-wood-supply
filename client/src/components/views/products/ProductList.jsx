@@ -78,7 +78,7 @@ const ProductList = () => {
               <CardMedia
                 component="img"
                 height="200"
-                image={product.thumbnail} // Use fallback if image is missing
+                image={product ? product.imageUrl || product.thumbnail : null} // Use fallback if image is missing
                 alt={product.name || "Product"}
               />
               <CardContent>

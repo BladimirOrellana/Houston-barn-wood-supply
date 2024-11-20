@@ -13,7 +13,7 @@ const cartReducer = (state, action) => {
 
       if (existingItemIndex > -1) {
         const updatedItems = [...state.items];
-        updatedItems[existingItemIndex].quantity += action.payload.quantity;
+        updatedItems[existingItemIndex].quantity = action.payload.quantity; // Update with the correct quantity from payload
 
         return { ...state, items: updatedItems };
       }
@@ -53,12 +53,52 @@ export const CartProvider = ({ children }) => {
     }
   };
 
+  // Update cart in the backend whenever there's a change
+  const updateCartBackend = async (userId, productId, quantity) => {
+    if (!userId) return; // Skip if no user is logged in
+    try {
+      await axios.post(`/api/carts/add`, {
+        userId,
+        productId,
+        quantity,
+      });
+      console.log("Cart updated in the backend successfully.");
+    } catch (error) {
+      console.error("Error updating cart in backend:", error);
+    }
+  };
+
+  const addToCart = (product) => {
+    const existingItem = cartState.items.find(
+      (item) => item.productId === product.productId
+    );
+
+    const newQuantity = existingItem
+      ? product.quantity // Update quantity directly
+      : product.quantity;
+
+    cartDispatch({
+      type: "ADD_TO_CART",
+      payload: {
+        productId: product.productId,
+        name: product.name,
+        quantity: newQuantity,
+        price: product.price,
+      },
+    });
+
+    // Update backend after context is updated
+    updateCartBackend(user._id, product.productId, newQuantity);
+  };
+
   useEffect(() => {
     if (user) fetchCart(user._id);
   }, [user]);
 
   return (
-    <CartContext.Provider value={{ cartState, cartDispatch, fetchCart }}>
+    <CartContext.Provider
+      value={{ cartState, cartDispatch, fetchCart, addToCart }}
+    >
       {children}
     </CartContext.Provider>
   );

@@ -10,26 +10,58 @@ import {
   Divider,
   CircularProgress,
   Container,
+  Button,
+  MenuItem,
+  Select,
 } from "@mui/material";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import GoBackButton from "../../GoBackButton/GoBackButton";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useUser } from "./../../../context/UserContext";
 
 const OrderDetails = () => {
+  const { user } = useUser();
   const { orderId } = useParams();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [newStatus, setNewStatus] = useState("");
 
   const fetchOrder = async () => {
     try {
       const response = await axios.get(`/api/orders/order/${orderId}`);
       setOrder(response.data);
+      setNewStatus(formatStatus(response.data.status)); // Format the status to match options
       setLoading(false);
     } catch (err) {
       console.error("Error fetching order details:", err);
       setError("Failed to fetch order details.");
       setLoading(false);
+    }
+  };
+
+  const formatStatus = (status) => {
+    // Ensure the status matches one of the available options
+    const validStatuses = ["Pending", "In Transit", "Delivered"];
+    return (
+      validStatuses.find((s) => s.toLowerCase() === status.toLowerCase()) ||
+      "Pending"
+    );
+  };
+
+  const updateOrderStatus = async () => {
+    try {
+      const response = await axios.put(`/api/orders/order/${orderId}`, {
+        status: newStatus,
+      });
+      console.log("response order ", response.data);
+      setOrder({ ...order, status: newStatus }); // Update status in the UI
+      toast.success("Order status updated successfully!");
+    } catch (err) {
+      console.error("Error updating order status:", err);
+      toast.error("Failed to update order status.");
     }
   };
 
@@ -55,7 +87,7 @@ const OrderDetails = () => {
 
   return (
     <Container maxWidth="md" sx={{ marginTop: 4 }}>
-      <GoBackButton />
+      <ToastContainer />
       <Box
         sx={{
           backgroundColor: "#f9f9f9",
@@ -64,6 +96,7 @@ const OrderDetails = () => {
           padding: { xs: 3, sm: 5 },
         }}
       >
+        <GoBackButton />
         <Typography
           variant="h4"
           sx={{
@@ -164,57 +197,82 @@ const OrderDetails = () => {
           >
             Order Summary
           </Typography>
+
           <Grid container spacing={2}>
             <Grid item xs={6}>
               <Typography variant="body1" sx={{ color: "#555" }}>
-                <strong>Order ID: {order._id}</strong>
-              </Typography>
-            </Grid>
-            <Grid item xs={6} textAlign="right"></Grid>
-            <Grid item xs={6}>
-              <Typography variant="body1" sx={{ color: "#555" }}>
-                <strong>Date:</strong>
-              </Typography>
-            </Grid>
-            <Grid item xs={6} textAlign="right">
-              <Typography variant="body1" sx={{ color: "#555" }}>
-                {new Date(order.createdAt).toLocaleDateString()}
+                <strong>Order ID:</strong>
               </Typography>
             </Grid>
             <Grid item xs={6}>
-              <Typography variant="body1" sx={{ color: "#555" }}>
-                <strong>Total Amount:</strong>
-              </Typography>
-            </Grid>
-            <Grid item xs={6} textAlign="right">
               <Typography
                 variant="body1"
-                sx={{ fontWeight: "bold", color: "#333" }}
+                sx={{ textAlign: "right", color: "#555" }}
               >
-                ${order.totalAmount.toFixed(2)}
+                {order._id}
               </Typography>
             </Grid>
-            <Grid item xs={6}>
-              <Typography variant="body1" sx={{ color: "#555" }}>
-                <strong>Status:</strong>
-              </Typography>
-            </Grid>
-            <Grid item xs={6} textAlign="right">
-              <Typography
-                variant="body1"
-                sx={{
-                  fontWeight: "bold",
-                  color:
-                    order.status === "Delivered"
-                      ? "green"
-                      : order.status === "In Transit"
-                      ? "orange"
-                      : "blue",
-                }}
-              >
-                {order.status}
-              </Typography>
-            </Grid>
+            {user && user.role === "admin" ? (
+              <>
+                {" "}
+                <Grid item xs={6}>
+                  <Typography variant="body1" sx={{ color: "#555" }}>
+                    <strong>Status:</strong>
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Select
+                    style={{
+                      color:
+                        order.status === "pending"
+                          ? "red"
+                          : order.status === "In Transit"
+                          ? "orange"
+                          : "Green",
+                    }}
+                    value={newStatus}
+                    onChange={(e) => setNewStatus(e.target.value)}
+                    fullWidth
+                  >
+                    <MenuItem
+                      style={{
+                        color: order.status === "pending" ? "red" : null,
+                      }}
+                      value="Pending"
+                    >
+                      Pending
+                    </MenuItem>
+                    <MenuItem
+                      style={{
+                        color: order.status === "In Transit" ? "Orange" : null,
+                      }}
+                      value="In Transit"
+                    >
+                      In Transit
+                    </MenuItem>
+                    <MenuItem
+                      style={{
+                        color: order.status === "Delivery" ? "Green" : null,
+                      }}
+                      value="Delivered"
+                    >
+                      Delivered
+                    </MenuItem>
+                  </Select>
+                </Grid>
+                <Grid item xs={12}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={updateOrderStatus}
+                    fullWidth
+                    sx={{ marginTop: 2 }}
+                  >
+                    Update Status
+                  </Button>
+                </Grid>{" "}
+              </>
+            ) : null}
           </Grid>
         </Paper>
       </Box>

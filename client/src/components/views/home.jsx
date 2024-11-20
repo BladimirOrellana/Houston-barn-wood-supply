@@ -6,10 +6,33 @@ import {
   Button,
   Grid,
   Container,
+  CircularProgress,
 } from "@mui/material";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const Homepage = () => {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchFeaturedProducts = async () => {
+      try {
+        const response = await axios.get("/api/products");
+        console.log("home response ", response.data);
+        setProducts(response.data);
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching featured products:", err);
+        setError("Failed to load featured products.");
+        setLoading(false);
+      }
+    };
+    fetchFeaturedProducts();
+  }, []);
+
   return (
     <>
       {/* Full-Width Header */}
@@ -32,17 +55,30 @@ const Homepage = () => {
           >
             <Typography
               variant="h1"
-              component="h1"
+              component={Link}
+              to="/"
               sx={{
                 fontWeight: "bold",
                 fontSize: "1.5rem",
                 textTransform: "uppercase",
                 color: "#FFFFFF",
-                cursor: "pointer",
+                textDecoration: "none",
               }}
             >
               Houston Barn Wood Supply
             </Typography>
+            <Button
+              variant="outlined"
+              color="secondary"
+              component={Link}
+              to="/products"
+              sx={{
+                textTransform: "none",
+                fontWeight: "bold",
+              }}
+            >
+              Explore Products
+            </Button>
           </Toolbar>
         </AppBar>
       </header>
@@ -52,9 +88,9 @@ const Homepage = () => {
         {/* Hero Section */}
         <Box
           sx={{
-            height: "90vh",
+            height: "80vh",
             backgroundImage:
-              "url('https://images.unsplash.com/photo-1715322458879-8f1cb558ffa8?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
+              "url('https://images.unsplash.com/photo-1541715332458879-8f1cb558ffa8?q=80&w=2574&auto=format&fit=crop')",
             backgroundSize: "cover",
             backgroundPosition: "center",
             display: "flex",
@@ -81,18 +117,17 @@ const Homepage = () => {
                 marginBottom: 2,
               }}
             >
-              Transform Your Spaces
+              Timeless Elegance in Every Plank
             </Typography>
             <Typography
-              variant="h3"
+              variant="h6"
               component="p"
               sx={{
                 fontSize: { xs: "1rem", sm: "1.25rem" },
                 marginBottom: 4,
               }}
             >
-              Discover the timeless beauty of reclaimed wood in Houston for your
-              next project.
+              Discover reclaimed wood natural beauty for your next project.
             </Typography>
             <Button
               variant="contained"
@@ -106,7 +141,7 @@ const Homepage = () => {
               component={Link}
               to="/products"
             >
-              Shop Now
+              Start Shopping
             </Button>
           </Box>
         </Box>
@@ -124,83 +159,72 @@ const Homepage = () => {
           >
             Featured Products
           </Typography>
-          <Grid container spacing={4}>
-            {[
-              {
-                name: "Reclaimed Cedar Plank",
-                description:
-                  "Premium cedar wood, perfect for rustic decor and furniture.",
-                image: "https://source.unsplash.com/400x300/?wood,plank",
-                alt: "Reclaimed Cedar Plank",
-              },
-              {
-                name: "Vintage Barn Wood Panel",
-                description:
-                  "Authentic barn wood panel, ideal for wall paneling.",
-                image: "https://source.unsplash.com/400x300/?wood,panel",
-                alt: "Vintage Barn Wood Panel",
-              },
-              {
-                name: "Rustic Cedar Beams",
-                description:
-                  "Sturdy cedar beams for construction or design projects.",
-                image: "https://source.unsplash.com/400x300/?wood,beam",
-                alt: "Rustic Cedar Beams",
-              },
-            ].map((product, index) => (
-              <Grid item xs={12} sm={6} md={4} key={index}>
-                <Box
-                  sx={{
-                    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
-                    borderRadius: 2,
-                    overflow: "hidden",
-                    textAlign: "center",
-                    backgroundColor: "#FFFFFF",
-                  }}
-                >
+          {loading ? (
+            <Box sx={{ display: "flex", justifyContent: "center" }}>
+              <CircularProgress />
+            </Box>
+          ) : error ? (
+            <Typography color="error" textAlign="center">
+              {error}
+            </Typography>
+          ) : (
+            <Grid container spacing={4}>
+              {products.map((product) => (
+                <Grid item xs={12} sm={6} md={4} key={product._id}>
                   <Box
-                    component="img"
-                    src={product.image}
-                    alt={product.alt}
                     sx={{
-                      width: "100%",
-                      height: "200px",
-                      objectFit: "cover",
+                      boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+                      borderRadius: 2,
+                      overflow: "hidden",
+                      textAlign: "center",
+                      backgroundColor: "#FFFFFF",
                     }}
-                  />
-                  <Box sx={{ padding: 2 }}>
-                    <Typography
-                      variant="h6"
+                  >
+                    <Box
+                      component="img"
+                      src={product.thumbnail}
+                      alt={product.name}
                       sx={{
-                        fontWeight: "bold",
-                        marginBottom: 1,
+                        width: "100%",
+                        height: "200px",
+                        objectFit: "cover",
                       }}
-                    >
-                      {product.name}
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        color: "text.secondary",
-                        marginBottom: 2,
-                      }}
-                    >
-                      {product.description}
-                    </Typography>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      size="small"
-                      href="/products"
-                      sx={{ textTransform: "none" }}
-                    >
-                      View Details
-                    </Button>
+                    />
+                    <Box sx={{ padding: 2 }}>
+                      <Typography
+                        variant="h6"
+                        sx={{
+                          fontWeight: "bold",
+                          marginBottom: 1,
+                        }}
+                      >
+                        {product.name}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: "text.secondary",
+                          marginBottom: 2,
+                        }}
+                      >
+                        {product.description}
+                      </Typography>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        size="small"
+                        component={Link}
+                        to={`/products/product/${product._id}`}
+                        sx={{ textTransform: "none" }}
+                      >
+                        View Details
+                      </Button>
+                    </Box>
                   </Box>
-                </Box>
-              </Grid>
-            ))}
-          </Grid>
+                </Grid>
+              ))}
+            </Grid>
+          )}
         </Container>
       </main>
     </>

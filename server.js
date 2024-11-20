@@ -11,7 +11,8 @@ app.use(cors());
 // Middleware
 app.use(express.json());
 app.use(bodyParser.json());
-
+// Serve uploaded files statically
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // API Routes
 app.use(routes);
 // Connect to MongoDB

@@ -8,13 +8,15 @@ import Profile from "./components/views/private/Profile";
 import About from "./components/views/about";
 import Contact from "./components/views/contact";
 import ProductList from "./components/views/products/ProductList";
-import OrderHistory from "./components/views/products/OrderHistory";
+import OrderHistory from "./components/views/private/Admin/products/OrderHistory";
 import ProductDetails from "./components/views/products/ProductDetails";
 
 import Cart from "./components/views/products/Cart";
 import Checkout from "./components/views/products/Checkout";
 import OrderDetails from "./components/views/products/OrderDetails";
 import PlankCalculator from "./components/calculator/plankCalculator";
+import AddProduct from "./components/views/private/Admin/products/addProduct";
+import UserOrders from "./components/views/private/users/orders/UserOrders";
 const App = () => {
   return (
     <Router>
@@ -30,6 +32,8 @@ const App = () => {
         <Route path="/orders" element={<OrderHistory />} />
         <Route path="/orders/order/:orderId" element={<OrderDetails />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/admin/add-product" element={<AddProduct />} />
+        <Route path="/my-orders" element={<UserOrders />} />
         <Route path="/products/product/:id" element={<ProductDetails />} />
         <Route path="/calculator" element={<PlankCalculator />} />
         <Route path="/checkout" element={<Checkout />} />

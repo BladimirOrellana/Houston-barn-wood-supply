@@ -33,6 +33,10 @@ function Navigation() {
     setMobileOpen(!mobileOpen);
   };
 
+  const handleCloseDrawer = () => {
+    setMobileOpen(false);
+  };
+
   const links = (
     <>
       <Button component={Link} to="/" color="inherit">
@@ -66,29 +70,60 @@ function Navigation() {
     <Box
       sx={{ width: 250, backgroundColor: "#f9f9f9", height: "100%" }}
       role="presentation"
+      onClick={handleCloseDrawer} // Close the drawer on any click inside
     >
       <List>
-        <ListItem button component={Link} to="/">
+        <ListItem button component={Link} to="/" onClick={handleCloseDrawer}>
           <ListItemText primary="Home" />
         </ListItem>
-        <ListItem button component={Link} to="/products">
+        <ListItem
+          button
+          component={Link}
+          to="/products"
+          onClick={handleCloseDrawer}
+        >
           <ListItemText primary="Products" />
         </ListItem>
-        <ListItem button component={Link} to="/about">
+        <ListItem
+          button
+          component={Link}
+          to="/about"
+          onClick={handleCloseDrawer}
+        >
           <ListItemText primary="About" />
         </ListItem>
-        <ListItem button component={Link} to="/contact">
+        <ListItem
+          button
+          component={Link}
+          to="/contact"
+          onClick={handleCloseDrawer}
+        >
           <ListItemText primary="Contact" />
         </ListItem>
-        <ListItem button component={Link} to="/calculator">
+        <ListItem
+          button
+          component={Link}
+          to="/calculator"
+          onClick={handleCloseDrawer}
+        >
           <ListItemText primary="Calculator" />
         </ListItem>
         {user ? (
-          <ListItem button component={Link} to="/profile">
+          <ListItem
+            button
+            component={Link}
+            to="/profile"
+            onClick={handleCloseDrawer}
+          >
             <ListItemText primary="Account" />
           </ListItem>
         ) : (
-          <ListItem button component={Link} to="/login">
+          <ListItem
+            button
+            component={Link}
+            to="/login"
+            onClick={handleCloseDrawer}
+          >
             <ListItemText primary="Login" />
           </ListItem>
         )}

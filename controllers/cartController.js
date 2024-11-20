@@ -57,21 +57,25 @@ exports.getCart = async (req, res) => {
 };
 
 // Remove item from cart
-exports.removeItemFromCart = async (req, res) => {
-  const { userId, productId } = req.body;
+
+exports.clearCart = async (req, res) => {
+  const { userId } = req.params; // Assuming the userId is passed as a route parameter
 
   try {
+    // Find the user's cart
     const cart = await Cart.findOne({ userId });
+
     if (!cart) {
       return res.status(404).json({ message: "Cart not found" });
     }
 
-    cart.items = cart.items.filter((item) => !item.productId.equals(productId));
+    // Clear all items from the cart
+    cart.items = [];
     await cart.save();
 
-    res.status(200).json({ message: "Item removed from cart", cart });
+    res.status(200).json({ message: "Cart cleared successfully" });
   } catch (error) {
-    console.error("Error removing item from cart:", error);
-    res.status(500).json({ message: "Failed to remove item from cart", error });
+    console.error("Error clearing cart:", error);
+    res.status(500).json({ message: "Failed to clear cart", error });
   }
 };

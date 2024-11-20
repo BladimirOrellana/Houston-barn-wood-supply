@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import {
   Box,
@@ -9,35 +9,47 @@ import {
   TextField,
 } from "@mui/material";
 import axios from "axios";
-import { useCart } from "./../../../context/CartContext";
-import { useUser } from "./../../../context/UserContext";
+import { useCart } from "../../../context/CartContext";
+import { useUser } from "../../../context/UserContext";
+
 const ProductDetails = () => {
   const { id } = useParams();
-  const { cartDispatch } = useCart();
+  const { cartDispatch, fetchCart } = useCart(); // Use fetchCart to refresh cart state
   const { user } = useUser();
-  const [product, setProduct] = useState([]);
+  const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
 
-  const fetchProduct = async () => {
-    try {
-      const response = await axios.get(`/api/products/${id}`);
-      console.log("Fetched product:", response.data);
-      setProduct(response.data);
-      setLoading(false);
-    } catch (err) {
-      console.error("Error fetching product:", err);
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const response = await axios.get(`/api/products/${id}`);
+        setProduct(response.data);
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching product:", err);
+        setLoading(false);
+      }
+    };
 
-  React.useEffect(() => {
     fetchProduct();
   }, [id]);
 
   const handleAddToCart = async () => {
     try {
-      // Dispatch to local context for UI update
+      if (!user) {
+        console.error("User not logged in");
+        return;
+      }
+
+      // Update the backend cart
+      await axios.post("/api/carts/add", {
+        userId: user._id,
+        productId: product._id,
+        quantity,
+      });
+
+      // Update the local cart context
       cartDispatch({
         type: "ADD_TO_CART",
         payload: {
@@ -48,15 +60,10 @@ const ProductDetails = () => {
         },
       });
 
-      // Send to the backend to save in the database
-      const userId = user._id; // Replace with actual user ID from auth
-      const response = await axios.post("/api/carts/add", {
-        userId,
-        productId: product._id,
-        quantity,
-      });
+      // Fetch the updated cart from the backend to ensure consistency
+      await fetchCart(user._id);
 
-      console.log("Cart updated in the database:", response.data);
+      console.log("Product added to cart and cart updated.");
     } catch (error) {
       console.error("Error adding item to cart:", error);
     }
@@ -75,11 +82,17 @@ const ProductDetails = () => {
     );
   }
 
-  return product.length === 0 ? (
-    <Box>
-      <h1>No product yets </h1>
-    </Box>
-  ) : (
+  if (!product) {
+    return (
+      <Box sx={{ textAlign: "center", marginTop: 4 }}>
+        <Typography variant="h5" color="error">
+          Product not found.
+        </Typography>
+      </Box>
+    );
+  }
+
+  return (
     <Box
       sx={{
         padding: 4,
@@ -98,7 +111,9 @@ const ProductDetails = () => {
         <Grid item xs={12} md={6}>
           <Box
             sx={{
-              backgroundImage: `url(${product.thumbnail})`,
+              backgroundImage: `url(${
+                product ? product.imageUrl || product.thumbnail : null
+              })`,
               backgroundSize: "cover",
               backgroundPosition: "center",
               borderRadius: 2,
@@ -156,10 +171,8 @@ const ProductDetails = () => {
               variant="contained"
               color="primary"
               size="large"
-              onClick={(e) => {
-                e.stopPropagation(); // Prevent parent event handling
-                handleAddToCart();
-              }}
+              disabled={!user}
+              onClick={handleAddToCart}
               sx={{ padding: "12px 24px", fontSize: "1rem" }}
             >
               Add to Cart
@@ -167,26 +180,6 @@ const ProductDetails = () => {
           </Box>
         </Grid>
       </Grid>
-
-      {/* Additional Details or Call-to-Actions */}
-      <Box
-        sx={{
-          textAlign: "center",
-          marginTop: 4,
-          backgroundColor: "white",
-          padding: 3,
-          borderRadius: 2,
-          boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-        }}
-      >
-        <Typography variant="h5" sx={{ fontWeight: "bold", marginBottom: 2 }}>
-          Why Choose Us?
-        </Typography>
-        <Typography variant="body1" sx={{ color: "text.secondary" }}>
-          Experience premium-quality products made with care and precision.
-          Order now and elevate your space with our handcrafted goods.
-        </Typography>
-      </Box>
     </Box>
   );
 };

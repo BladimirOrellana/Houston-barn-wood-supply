@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { PayPalButtons } from "@paypal/react-paypal-js";
 import { useCart } from "./../../../context/CartContext";
 import cartApi from "../../../apis/cartApi";
@@ -9,6 +10,7 @@ import { Box, Typography } from "@mui/material";
 const Checkout = () => {
   const { cartState, cartDispatch } = useCart(); // Access cartState from useCart
   const { user } = useUser();
+  const navigate = useNavigate(); // For navigation
 
   // Calculate total price
   const totalPrice = cartState.items.reduce(
@@ -35,6 +37,8 @@ const Checkout = () => {
       const response = await axios.post("/api/orders", orderPayload);
       console.log("Order saved successfully:", response.data);
 
+      const orderId = response.data.order._id; // Extract order ID
+
       const data = {
         userId: user._id,
       };
@@ -45,6 +49,9 @@ const Checkout = () => {
 
       // Dispatch action to clear the cart in the context
       cartDispatch({ type: "CLEAR_CART" });
+
+      // Redirect to order confirmation or details page
+      navigate(`/orders/order/${orderId}`);
     } catch (error) {
       console.error("Error saving order or clearing cart:", error);
     }

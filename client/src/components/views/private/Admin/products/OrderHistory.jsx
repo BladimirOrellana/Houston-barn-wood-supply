@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import GoBackButton from "../../GoBackButton/GoBackButton";
+import GoBackButton from "../../../../GoBackButton/GoBackButton";
 
 const OrderHistory = () => {
   const [orders, setOrders] = useState([]);
@@ -123,7 +123,7 @@ const OrderHistory = () => {
                         ? "green"
                         : order.status === "In Transit"
                         ? "orange"
-                        : "blue",
+                        : "red",
                     fontWeight: "bold",
                   }}
                 >
@@ -192,7 +192,7 @@ const OrderHistory = () => {
                             ? "green"
                             : order.status === "In Transit"
                             ? "orange"
-                            : "blue",
+                            : "red",
                         fontWeight: "bold",
                       }}
                     >

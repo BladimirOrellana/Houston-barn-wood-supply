@@ -85,27 +85,19 @@ const Profile = () => {
 
         {/* Profile Actions */}
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={4}>
-            <Button
-              variant="contained"
-              color="primary"
-              fullWidth
-              sx={{
-                textTransform: "none",
-                padding: "10px 20px",
-                borderRadius: 3,
-                fontSize: "1rem",
-              }}
-            >
-              Active Orders
-            </Button>
-          </Grid>
+          {user.role === "user" ? (
+            <Grid item xs={12} sm={4}>
+              <Button component={Link} to="/my-orders" color="inherit">
+                My Orders
+              </Button>
+            </Grid>
+          ) : null}
           {user.role === "admin" && (
             <Grid item xs={12} sm={4}>
               <Button
                 component={Link}
                 to="/orders"
-                variant="contained"
+                variant="text"
                 color="secondary"
                 fullWidth
                 sx={{
@@ -117,6 +109,24 @@ const Profile = () => {
               >
                 Manage Orders
               </Button>
+              <Grid>
+                {" "}
+                <Button
+                  component={Link}
+                  to="/admin/add-product"
+                  variant="text"
+                  color="secondary"
+                  fullWidth
+                  sx={{
+                    textTransform: "none",
+                    padding: "10px 20px",
+                    borderRadius: 3,
+                    fontSize: "1rem",
+                  }}
+                >
+                  Add Product
+                </Button>
+              </Grid>
             </Grid>
           )}
           <Grid item xs={12} sm={4}>
