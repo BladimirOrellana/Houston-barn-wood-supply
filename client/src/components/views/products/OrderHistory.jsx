@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -9,33 +10,63 @@ import {
   TableRow,
   Paper,
   Button,
+  CircularProgress,
 } from "@mui/material";
+import axios from "axios";
+import { Link } from "react-router-dom";
 
 const OrderHistory = () => {
-  // Mock order data
-  const orders = [
-    {
-      id: "001",
-      date: "2024-01-01",
-      items: "Reclaimed Cedar Plank",
-      total: "$75",
-      status: "Delivered",
-    },
-    {
-      id: "002",
-      date: "2024-01-15",
-      items: "Vintage Barn Wood Panel",
-      total: "$120",
-      status: "In Transit",
-    },
-    {
-      id: "003",
-      date: "2024-02-05",
-      items: "Rustic Cedar Beams",
-      total: "$300",
-      status: "Processing",
-    },
-  ];
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  // Fetch orders from the API
+  const fetchOrders = async () => {
+    try {
+      const response = await axios.get("/api/orders"); // Replace with your API endpoint
+      console.error(" fetching orders set:", response.data);
+      setOrders(response.data);
+      setLoading(false);
+    } catch (err) {
+      console.error("Error fetching orders:", err);
+      setError("Failed to fetch orders.");
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "100vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "100vh",
+        }}
+      >
+        <Typography color="error">{error}</Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box
@@ -78,7 +109,7 @@ const OrderHistory = () => {
                 Date
               </TableCell>
               <TableCell align="left" sx={{ fontWeight: "bold" }}>
-                Items
+                Quantity
               </TableCell>
               <TableCell align="left" sx={{ fontWeight: "bold" }}>
                 Total
@@ -93,11 +124,17 @@ const OrderHistory = () => {
           </TableHead>
           <TableBody>
             {orders.map((order) => (
-              <TableRow key={order.id}>
-                <TableCell align="left">{order.id}</TableCell>
-                <TableCell align="left">{order.date}</TableCell>
-                <TableCell align="left">{order.items}</TableCell>
-                <TableCell align="left">{order.total}</TableCell>
+              <TableRow key={order._id}>
+                <TableCell align="left">{order._id}</TableCell>
+                <TableCell align="left">
+                  {new Date(order.createdAt).toLocaleDateString()}
+                </TableCell>
+                <TableCell align="left">
+                  {order.items.map((item) => item.quantity)}
+                </TableCell>
+                <TableCell align="left">
+                  ${order.totalAmount.toFixed(2)}
+                </TableCell>
                 <TableCell align="left">
                   <Typography
                     sx={{
@@ -116,9 +153,11 @@ const OrderHistory = () => {
                 <TableCell align="center">
                   <Button
                     variant="contained"
-                    color="primary"
+                    style={{ backgroundColor: "orange" }}
                     size="small"
                     sx={{ textTransform: "none" }}
+                    component={Link}
+                    to={`/orders/order/${order._id}`}
                   >
                     View Details
                   </Button>

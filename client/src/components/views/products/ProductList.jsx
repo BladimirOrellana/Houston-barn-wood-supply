@@ -65,9 +65,12 @@ const ProductList = () => {
     </Box>
   ) : (
     <Container>
-      <Typography variant="h4" gutterBottom textAlign="center">
-        Products
-      </Typography>
+      <Container style={{ padding: 20 }}>
+        {" "}
+        <Typography variant="h1" textAlign="center">
+          Products
+        </Typography>
+      </Container>
       <Grid container spacing={3}>
         {products.map((product) => (
           <Grid item xs={12} sm={6} md={4} key={product._id}>

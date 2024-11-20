@@ -61,3 +61,39 @@ exports.getOrders = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch orders", error });
   }
 };
+
+// Get all orders (Admin)
+exports.getAllOrders = async (req, res) => {
+  try {
+    const orders = await Order.find()
+      .populate("items.productId", "name price")
+      .populate("userId", "firstName lastName email") // Optional: populate user info
+      .sort({ createdAt: -1 }); // Sort by creation date in descending order
+
+    res.status(200).json(orders);
+  } catch (error) {
+    console.error("Error fetching all orders:", error);
+    res.status(500).json({ message: "Failed to fetch orders", error });
+  }
+};
+// Get order details by orderId
+exports.getOrderDetails = async (req, res) => {
+  console.error("order details 1:", req.params);
+  const { orderId } = req.params;
+
+  try {
+    const order = await Order.findById(orderId)
+      .populate("items.productId", "name price description images")
+      .populate("userId", "firstName lastName email");
+    console.error("order details: database", order);
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    res.status(200).json(order);
+  } catch (error) {
+    console.error("Error fetching order details:", error);
+    res.status(500).json({ message: "Failed to fetch order details", error });
+  }
+};
