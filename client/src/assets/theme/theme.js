@@ -3,7 +3,7 @@ import { createTheme } from "@mui/material/styles";
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#6A4C93", // Rustic Brown
+      main: "#8B4513", // Rustic Brown
     },
     secondary: {
       main: "#FF8C42", // Warm Orange

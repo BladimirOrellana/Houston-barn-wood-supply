@@ -25,6 +25,7 @@ const OrderDetails = () => {
     try {
       const response = await axios.get(`/api/orders/order/${orderId}`); // Adjust endpoint as needed
       setOrder(response.data);
+      console.error(" fetching order details:", response.data);
       setLoading(false);
     } catch (err) {
       console.error("Error fetching order details:", err);
