@@ -182,7 +182,9 @@ const Homepage = () => {
                   >
                     <Box
                       component="img"
-                      src={product.thumbnail}
+                      src={
+                        product ? product.imageUrl || product.thumbnail : null
+                      }
                       alt={product.name}
                       sx={{
                         width: "100%",
