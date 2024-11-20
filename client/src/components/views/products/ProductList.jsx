@@ -52,7 +52,14 @@ const ProductList = () => {
     );
   }
 
-  return (
+  return products.length === 0 ? (
+    <Box>
+      <div style={{ textAlign: "center" }}>
+        {" "}
+        <h1>No Products Yet</h1>
+      </div>
+    </Box>
+  ) : (
     <Container>
       <Typography variant="h4" gutterBottom textAlign="center">
         Products
