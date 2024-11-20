@@ -4,7 +4,7 @@ const productApi = {
   // Get all products
   getAll: function () {
     console.log("Fetching all products");
-    return axios.get("/api/products");
+    return axios.get("/api/products/");
   },
 
   // Get a product by ID
