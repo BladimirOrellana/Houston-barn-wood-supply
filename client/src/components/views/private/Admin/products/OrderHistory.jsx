@@ -131,7 +131,16 @@ const OrderHistory = () => {
                 </Typography>
                 <Button
                   variant="contained"
-                  color="primary"
+                  style={{
+                    backgroundColor:
+                      order.status === "Delivered"
+                        ? "green"
+                        : order.status === "In Transit"
+                        ? "orange"
+                        : order.status === "pending"
+                        ? "brown"
+                        : "red",
+                  }}
                   size="small"
                   sx={{ textTransform: "none", marginTop: 2 }}
                   component={Link}
