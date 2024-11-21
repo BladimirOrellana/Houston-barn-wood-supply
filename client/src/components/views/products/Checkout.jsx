@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { PayPalButtons } from "@paypal/react-paypal-js";
 import { useCart } from "./../../../context/CartContext";
 import cartApi from "../../../apis/cartApi";
@@ -11,6 +11,7 @@ const Checkout = () => {
   const { cartState, cartDispatch } = useCart();
   const { user } = useUser();
   const navigate = useNavigate();
+  const [idForOrder, setIdForOrder] = useState(null);
   // Calculate total price
   const totalPrice = cartState.items.reduce(
     (acc, item) => acc + item.productId.price * item.quantity,
@@ -34,6 +35,7 @@ const Checkout = () => {
       .post("/api/orders", orderPayload)
       .then((response) => {
         const orderId = response.data.order._id;
+        setIdForOrder(orderId);
 
         // Clear the cart in the database
         cartApi
@@ -56,7 +58,7 @@ const Checkout = () => {
   const handleApprove = (data, actions) => {
     return actions.order.capture().then((details) => {
       saveOrder(details); // Save the order and clear the cart
-      navigate(`/`);
+      navigate(`/oreders/order/${idForOrder}`);
     });
   };
 
