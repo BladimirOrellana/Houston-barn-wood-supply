@@ -13,7 +13,8 @@ const cartApi = {
 
   // Remove item from cart
   removeItem: function (data) {
-    return axios.delete("/api/carts/remove", { data });
+    console.log("clear axios ", data);
+    return axios.delete(`/api/carts/${data.userId}/clear`);
   },
 };
 

@@ -203,15 +203,14 @@ const OrderDetails = () => {
               <Typography variant="body1" sx={{ color: "#555" }}>
                 <strong>Order ID:</strong>
               </Typography>
-            </Grid>
-            <Grid item xs={6}>
               <Typography
                 variant="body1"
-                sx={{ textAlign: "right", color: "#555" }}
+                sx={{ textAlign: "left", color: "#555" }}
               >
                 {order._id}
               </Typography>
             </Grid>
+            <Grid item xs={6}></Grid>
             {user && user.role === "admin" ? (
               <>
                 {" "}

@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { PayPalButtons } from "@paypal/react-paypal-js";
 import { useCart } from "./../../../context/CartContext";
 import cartApi from "../../../apis/cartApi";
@@ -8,9 +7,8 @@ import { useUser } from "./../../../context/UserContext";
 import { Box, Typography } from "@mui/material";
 
 const Checkout = () => {
-  const { cartState, cartDispatch } = useCart(); // Access cartState from useCart
+  const { cartState, cartDispatch } = useCart();
   const { user } = useUser();
-  const navigate = useNavigate(); // For navigation
 
   // Calculate total price
   const totalPrice = cartState.items.reduce(
@@ -18,48 +16,45 @@ const Checkout = () => {
     0
   );
 
-  const saveOrder = async (paymentDetails) => {
-    try {
-      // Construct order payload
-      const orderPayload = {
-        userId: user._id,
-        items: cartState.items.map((item) => ({
-          productId: item.productId._id,
-          name: item.productId.name,
-          quantity: item.quantity,
-          price: item.productId.price,
-        })),
-        totalAmount: totalPrice,
-        paymentDetails,
-      };
+  const saveOrder = (paymentDetails) => {
+    const orderPayload = {
+      userId: user._id,
+      items: cartState.items.map((item) => ({
+        productId: item.productId._id,
+        name: item.productId.name,
+        quantity: item.quantity,
+        price: item.productId.price,
+      })),
+      totalAmount: totalPrice,
+      paymentDetails,
+    };
 
-      // Send the order to the backend
-      const response = await axios.post("/api/orders", orderPayload);
-      console.log("Order saved successfully:", response.data);
+    axios
+      .post("/api/orders", orderPayload)
+      .then((response) => {
+        const orderId = response.data.order._id;
 
-      const orderId = response.data.order._id; // Extract order ID
+        // Clear the cart in the database
+        cartApi
+          .removeItem({ userId: user._id })
+          .then(() => {
+            cartDispatch({ type: "CLEAR_CART" });
 
-      const data = {
-        userId: user._id,
-      };
-
-      // Clear the cart in the database
-      await cartApi.removeItem(data);
-      console.log("Cart cleared successfully.");
-
-      // Dispatch action to clear the cart in the context
-      cartDispatch({ type: "CLEAR_CART" });
-
-      // Redirect to order confirmation or details page
-      navigate(`/orders/order/${orderId}`);
-    } catch (error) {
-      console.error("Error saving order or clearing cart:", error);
-    }
+            // Explicitly redirect user to order details page
+            window.location.href = `/orders/order/${orderId}`;
+          })
+          .catch((error) => {
+            console.error("Error clearing cart:", error);
+            console.error("Error clearing cart:", error);
+          });
+      })
+      .catch((error) => {
+        console.error("Error saving order:", error);
+      });
   };
 
   const handleApprove = (data, actions) => {
     return actions.order.capture().then((details) => {
-      alert(`Transaction completed by ${details.payer.name.given_name}`);
       saveOrder(details); // Save the order and clear the cart
     });
   };
@@ -75,7 +70,7 @@ const Checkout = () => {
           console.error("Error fetching cart:", err);
         });
     }
-  }, [user]); // Fetch cart when component mounts and user is logged in
+  }, [user]);
 
   return (
     <Box
@@ -92,6 +87,9 @@ const Checkout = () => {
     >
       <Typography variant="h4" sx={{ marginBottom: 2 }}>
         Checkout
+      </Typography>
+      <Typography variant="h4" sx={{ marginBottom: 2 }}>
+        Cancel
       </Typography>
       <Typography variant="h5" sx={{ marginBottom: 4 }}>
         Total: ${totalPrice.toFixed(2)}
