@@ -58,7 +58,7 @@ const Checkout = () => {
   const handleApprove = (data, actions) => {
     return actions.order.capture().then((details) => {
       saveOrder(details); // Save the order and clear the cart
-      navigate(`/oreders/order/${idForOrder}`);
+      navigate(`/orders/order/${idForOrder}`);
     });
   };
 
