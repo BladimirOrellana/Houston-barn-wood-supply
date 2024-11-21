@@ -7,11 +7,7 @@ import userApi from "../apis/userApi";
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(() => {
-    // Retrieve the user from localStorage during initial state setup
-    const storedUser = localStorage.getItem("user");
-    return storedUser ? JSON.parse(storedUser) : null;
-  });
+  const [user, setUser] = useState();
 
   const [loading, setLoading] = useState(true); // Track loading state
 
@@ -31,12 +27,15 @@ export const UserProvider = ({ children }) => {
                 role: result.data.role,
                 _id: result.data._id,
               };
-
-              console.log("context currentuser ", currentUserWithDB);
-
-              setUser(currentUserWithDB); // Update user state
               // Save user to localStorage
               localStorage.setItem("user", JSON.stringify(currentUserWithDB));
+
+              const storedUser = localStorage.getItem("user");
+              const userLocal = JSON.parse(storedUser);
+
+              console.log("context local currentuser ", userLocal);
+
+              setUser(userLocal); // Update user state
             }
           })
           .catch((err) => {
