@@ -5,11 +5,12 @@ import cartApi from "../../../apis/cartApi";
 import axios from "axios";
 import { useUser } from "./../../../context/UserContext";
 import { Box, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const Checkout = () => {
   const { cartState, cartDispatch } = useCart();
   const { user } = useUser();
-
+  const navigate = useNavigate();
   // Calculate total price
   const totalPrice = cartState.items.reduce(
     (acc, item) => acc + item.productId.price * item.quantity,
@@ -41,7 +42,7 @@ const Checkout = () => {
             cartDispatch({ type: "CLEAR_CART" });
 
             // Explicitly redirect user to order details page
-            window.location.href = `/orders/order/${orderId}`;
+            navigate(`/orders/order/${orderId}`);
           })
           .catch((error) => {
             console.error("Error clearing cart:", error);
