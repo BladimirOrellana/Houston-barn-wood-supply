@@ -75,8 +75,8 @@ const Homepage = () => {
               sx={{
                 textTransform: "none",
                 fontWeight: "bold",
-                padding: { xs: "8px 16px", sm: "10px 20px" }, // Adjust padding for smaller screens
-                fontSize: { xs: "0.8rem", sm: "1rem" }, // Adjust font size for smaller screens
+                padding: { xs: "5px 10px", sm: "7px 12px" }, // Adjust padding for smaller screens
+                fontSize: { xs: "0.5rem", sm: "0.7rem" }, // Adjust font size for smaller screens
               }}
             >
               Explore Products
