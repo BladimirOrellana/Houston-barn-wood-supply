@@ -67,20 +67,6 @@ const Homepage = () => {
             >
               Houston Barn Wood Supply
             </Typography>
-            <Button
-              variant="outlined"
-              color="secondary"
-              component={Link}
-              to="/products"
-              sx={{
-                textTransform: "none",
-                fontWeight: "bold",
-                padding: { xs: "5px 10px", sm: "7px 12px" }, // Adjust padding for smaller screens
-                fontSize: { xs: "0.5rem", sm: "0.7rem" }, // Adjust font size for smaller screens
-              }}
-            >
-              Explore Products
-            </Button>
           </Toolbar>
         </AppBar>
       </header>
