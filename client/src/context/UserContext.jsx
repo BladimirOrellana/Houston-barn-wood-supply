@@ -7,7 +7,12 @@ import userApi from "../apis/userApi";
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    // Retrieve the user from localStorage during initial state setup
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
+
   const [loading, setLoading] = useState(true); // Track loading state
 
   // Monitor authentication state
@@ -26,9 +31,12 @@ export const UserProvider = ({ children }) => {
                 role: result.data.role,
                 _id: result.data._id,
               };
+
               console.log("context currentuser ", currentUserWithDB);
 
-              setUser(currentUser ? currentUserWithDB : currentUser); // Update user state when authentication state changes
+              setUser(currentUserWithDB); // Update user state
+              // Save user to localStorage
+              localStorage.setItem("user", JSON.stringify(currentUserWithDB));
             }
           })
           .catch((err) => {
@@ -36,6 +44,8 @@ export const UserProvider = ({ children }) => {
           });
       } else {
         console.log("context currentuser Null");
+        setUser(null); // Clear the user state
+        localStorage.removeItem("user"); // Remove user from localStorage
       }
       setLoading(false); // Stop loading once auth state is determined
     });
@@ -45,6 +55,7 @@ export const UserProvider = ({ children }) => {
 
   const logout = () => {
     setUser(null); // Clear the user state
+    localStorage.removeItem("user"); // Remove user from localStorage
   };
 
   return (
