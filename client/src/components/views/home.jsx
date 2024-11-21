@@ -75,6 +75,7 @@ const Homepage = () => {
               sx={{
                 textTransform: "none",
                 fontWeight: "bold",
+                fontSize: { xs: "2rem", sm: "3rem", md: "4rem" },
               }}
             >
               Explore Products
