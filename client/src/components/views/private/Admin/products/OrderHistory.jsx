@@ -192,7 +192,10 @@ const OrderHistory = () => {
                             ? "green"
                             : order.status === "In Transit"
                             ? "orange"
+                            : order.status === "pending"
+                            ? "brown"
                             : "red",
+
                         fontWeight: "bold",
                       }}
                     >

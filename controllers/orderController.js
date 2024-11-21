@@ -109,7 +109,7 @@ exports.updateOrder = async (req, res) => {
 
   try {
     // Validate the status
-    const validStatuses = ["Pending", "In Transit", "Delivered"];
+    const validStatuses = ["Pending", "In Transit", "Delivered", "Cancelled"];
     if (!validStatuses.includes(status)) {
       return res.status(400).json({
         message:

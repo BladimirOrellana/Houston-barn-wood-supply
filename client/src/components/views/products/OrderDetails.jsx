@@ -44,7 +44,7 @@ const OrderDetails = () => {
 
   const formatStatus = (status) => {
     // Ensure the status matches one of the available options
-    const validStatuses = ["Pending", "In Transit", "Delivered"];
+    const validStatuses = ["Pending", "In Transit", "Delivered", "Cancelled"];
     return (
       validStatuses.find((s) => s.toLowerCase() === status.toLowerCase()) ||
       "Pending"
@@ -213,7 +213,6 @@ const OrderDetails = () => {
             <Grid item xs={6}></Grid>
             {user && user.role === "admin" ? (
               <>
-                {" "}
                 <Grid item xs={6}>
                   <Typography variant="body1" sx={{ color: "#555" }}>
                     <strong>Status:</strong>
@@ -223,40 +222,22 @@ const OrderDetails = () => {
                   <Select
                     style={{
                       color:
-                        order.status === "pending"
-                          ? "red"
-                          : order.status === "In Transit"
+                        newStatus === "Pending"
+                          ? "brown"
+                          : newStatus === "In Transit"
                           ? "orange"
-                          : "Green",
+                          : newStatus === "Cancelled"
+                          ? "red"
+                          : "green",
                     }}
                     value={newStatus}
                     onChange={(e) => setNewStatus(e.target.value)}
                     fullWidth
                   >
-                    <MenuItem
-                      style={{
-                        color: order.status === "pending" ? "red" : null,
-                      }}
-                      value="Pending"
-                    >
-                      Pending
-                    </MenuItem>
-                    <MenuItem
-                      style={{
-                        color: order.status === "In Transit" ? "Orange" : null,
-                      }}
-                      value="In Transit"
-                    >
-                      In Transit
-                    </MenuItem>
-                    <MenuItem
-                      style={{
-                        color: order.status === "Delivery" ? "Green" : null,
-                      }}
-                      value="Delivered"
-                    >
-                      Delivered
-                    </MenuItem>
+                    <MenuItem value="Pending">Pending</MenuItem>
+                    <MenuItem value="In Transit">In Transit</MenuItem>
+                    <MenuItem value="Delivered">Delivered</MenuItem>
+                    <MenuItem value="Cancelled">Cancelled</MenuItem>
                   </Select>
                 </Grid>
                 <Grid item xs={12}>
@@ -269,7 +250,7 @@ const OrderDetails = () => {
                   >
                     Update Status
                   </Button>
-                </Grid>{" "}
+                </Grid>
               </>
             ) : null}
           </Grid>

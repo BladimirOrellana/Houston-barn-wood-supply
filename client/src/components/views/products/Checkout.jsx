@@ -33,7 +33,7 @@ const Checkout = () => {
     axios
       .post("/api/orders", orderPayload)
       .then((response) => {
-        const orderId = response.data.order._id;
+        // const orderId = response.data.order._id;
 
         // Clear the cart in the database
         cartApi
@@ -42,7 +42,7 @@ const Checkout = () => {
             cartDispatch({ type: "CLEAR_CART" });
 
             // Explicitly redirect user to order details page
-            navigate(`/orders/order/${orderId}`);
+            // navigate(`/orders/order/${orderId}`);
           })
           .catch((error) => {
             console.error("Error clearing cart:", error);
@@ -57,6 +57,7 @@ const Checkout = () => {
   const handleApprove = (data, actions) => {
     return actions.order.capture().then((details) => {
       saveOrder(details); // Save the order and clear the cart
+      navigate(`/`);
     });
   };
 
